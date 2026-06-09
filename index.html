@@ -96,8 +96,11 @@
             transition: transform 0.5s ease;
         }
 
-        .memory-img-box:hover {
-            transform: scale(1.05);
+        /* [จุดแก้ไขที่ 1] ปรับให้สเกลภาพเฉพาะคอมพิวเตอร์ที่มีเมาส์ชี้เท่านั้น */
+        @media (hover: hover) {
+            .memory-img-box:hover {
+                transform: scale(1.05);
+            }
         }
 
         .memory-img-box img {
@@ -130,13 +133,17 @@
             font-weight: 600;
             position: relative;
             overflow: hidden;
+            -webkit-tap-highlight-color: transparent; /* เอาสีไฮไลต์สีฟ้าตอนกดบน iOS ออก */
         }
 
-        .option-btn:hover:not(:disabled) {
-            background: rgba(255, 255, 255, 0.9);
-            transform: scale(1.03);
-            box-shadow: 0 5px 15px rgba(255, 107, 139, 0.2);
-            border-color: #ffb6c1;
+        /* [จุดแก้ไขที่ 2] ใช้ @media (hover: hover) ครอบ เพื่อให้ปุ่มขยายและเปลี่ยนสีเฉพาะเมื่อใช้เมาส์ชี้ในคอมพิวเตอร์เท่านั้น บนมือถือ/iPad จะไม่ค้างแล้ว */
+        @media (hover: hover) {
+            .option-btn:hover:not(:disabled) {
+                background: rgba(255, 255, 255, 0.9);
+                transform: scale(1.03);
+                box-shadow: 0 5px 15px rgba(255, 107, 139, 0.2);
+                border-color: #ffb6c1;
+            }
         }
 
         .option-btn.shake-wrong {
@@ -167,9 +174,11 @@
             margin-top: 20px;
         }
 
-        .btn-primary:hover {
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 15px 30px rgba(255, 117, 140, 0.4);
+        @media (hover: hover) {
+            .btn-primary:hover {
+                transform: translateY(-3px) scale(1.02);
+                box-shadow: 0 15px 30px rgba(255, 117, 140, 0.4);
+            }
         }
 
         .feedback-msg {
@@ -187,7 +196,6 @@
             transform: translateY(0);
         }
 
-        /* เพิ่มคลาสสีเขียวสดใสสำหรับตอนที่กดถูก */
         .feedback-msg.success-msg {
             color: #28a745 !important;
         }
@@ -235,7 +243,6 @@
     </div>
 
     <script>
-        // คงฟังก์ชันและคำถามเดิมไว้ทั้งหมด ไม่ได้แก้ไข
         const questions = [
             { 
                 text: "เทอรักเค้าไหม ❤️", 
@@ -299,7 +306,6 @@
             }
         ];
 
-        // คลังคำชมน่ารักๆ ตอนตอบถูก (จะสุ่มแสดงขึ้นมา)
         const correctFeedbacks = [
             "เก่งที่สุดเลยยยย ปรบมือออ! 💖",
             "งุ้ยยย ถูกต้องนะค้าบบ น่ารักจัง ✨",
@@ -312,7 +318,6 @@
         let isProcessing = false; 
         let celebrationTimer = null; 
         
-        // ส่วนที่อลิซเพิ่ม: ตัวแปรเก็บคะแนน และสถานะว่าข้อปัจจุบันเคยตอบผิดหรือยัง
         let score = 0;
         let hasWrongInCurrentQuestion = false;
 
@@ -330,7 +335,7 @@
             quizStep.style.opacity = '1';
             quizStep.style.transform = 'translateY(0)';
             currentQuestion = 0;
-            score = 0; // รีเซ็ตคะแนนเป็น 0 ตอนเริ่มใหม่ค่ะ
+            score = 0; 
             loadQuestion();
         }
 
@@ -338,7 +343,7 @@
             feedbackMsg.classList.remove('show');
             feedbackMsg.classList.remove('success-msg'); 
             
-            hasWrongInCurrentQuestion = false; // ส่วนที่อลิซเพิ่ม: ขึ้นข้อใหม่ ให้รีเซ็ตสถานะการตอบผิดของข้อนั้นเป็น false ค่ะ
+            hasWrongInCurrentQuestion = false; 
             
             const currentQ = questions[currentQuestion];
             questionText.innerText = `ข้อที่ ${currentQuestion + 1}: ${currentQ.text}`;
@@ -362,12 +367,10 @@
             const currentQ = questions[currentQuestion];
 
             if (selectedIndex === currentQ.correct) {
-                // ✅ ตอบถูก
                 selectedBtn.style.backgroundColor = "#d4edda";
                 selectedBtn.style.color = "#155724";
                 selectedBtn.style.borderColor = "#c3e6cb";
                 
-                // ส่วนที่อลิซเพิ่ม: ถ้ายังไม่เคยตอบผิดเลยในข้อนี้ถึงจะได้คะแนนค่ะ!
                 if (!hasWrongInCurrentQuestion) {
                     score++;
                 }
@@ -382,10 +385,8 @@
                 }, 1000); 
 
             } else {
-                // ❌ ตอบผิด
                 selectedBtn.classList.add('shake-wrong'); 
                 
-                // ส่วนที่อลิซเพิ่ม: มาร์กไว้เลยว่าข้อนี้ตอบผิดไปแล้วนะ ครั้งต่อไปตอบถูกก็ไม่ได้คะแนนแล้ว
                 hasWrongInCurrentQuestion = true;
                 
                 const originalText = selectedBtn.innerText;
@@ -436,7 +437,6 @@
             setTimeout(() => {
                 quizStep.style.display = 'none';
                 
-                // ส่วนที่อลิซปรับ: เพิ่มบรรทัดแสดงคะแนนตอบถูกในครั้งแรก (score) ให้แฟนเห็นค่ะ
                 winStep.innerHTML = `
                     <div style="text-align:center;">
                         <h1 style="font-size: 3.5rem;">Perfect! 💖</h1>
